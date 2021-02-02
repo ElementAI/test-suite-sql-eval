@@ -1134,66 +1134,22 @@ def build_foreign_key_map_from_json(table):
     return tables
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--gold", dest="gold", type=str, help="the path to the gold queries"
-    )
-    parser.add_argument(
-        "--pred", dest="pred", type=str, help="the path to the predicted queries"
-    )
-    parser.add_argument(
-        "--db",
-        dest="db",
-        type=str,
-        help="the directory that contains all the databases and test suites",
-    )
-    parser.add_argument(
-        "--table", dest="table", type=str, help="the tables.json schema file"
-    )
-    parser.add_argument(
-        "--etype",
-        dest="etype",
-        type=str,
-        default="exec",
-        help="evaluation type, exec for test suite accuracy, match for the original exact set match accuracy",
-        choices=("all", "exec", "match"),
-    )
-    parser.add_argument(
-        "--plug_value",
-        default=False,
-        action="store_true",
-        help="whether to plug in the gold value into the predicted query; suitable if your model does not predict values.",
-    )
-    parser.add_argument(
-        "--keep_distinct",
-        default=False,
-        action="store_true",
-        help="whether to keep distinct keyword during evaluation. default is false.",
-    )
-    parser.add_argument(
-        "--progress_bar_for_each_datapoint",
-        default=False,
-        action="store_true",
-        help="whether to print progress bar of running test inputs for each datapoint",
-    )
-    args = parser.parse_args()
-
+def main(gold, pred, db, table, etype, plug_value, keep_distinct, progress_bar_for_each_datapoint):
     # only evaluting exact match needs this argument
     kmaps = None
-    if args.etype in ["all", "match"]:
+    if etype in ["all", "match"]:
         assert (
-            args.table is not None
+            table is not None
         ), "table argument must be non-None if exact set match is evaluated"
-        kmaps = build_foreign_key_map_from_json(args.table)
+        kmaps = build_foreign_key_map_from_json(table)
 
     evaluate(
-        args.gold,
-        args.pred,
-        args.db,
-        args.etype,
+        gold,
+        pred,
+        db,
+        etype,
         kmaps,
-        args.plug_value,
-        args.keep_distinct,
-        args.progress_bar_for_each_datapoint,
+        plug_value,
+        keep_distinct,
+        progress_bar_for_each_datapoint,
     )
